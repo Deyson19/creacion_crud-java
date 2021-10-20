@@ -91,6 +91,8 @@ public class Principal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPopupMenu1 = new javax.swing.JPopupMenu();
+        popEliminar = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -111,10 +113,20 @@ public class Principal extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaDatos = new javax.swing.JTable();
         btnImprimir = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        txtBuscar = new javax.swing.JTextField();
+
+        popEliminar.setText("Borrar Registro");
+        popEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                popEliminarActionPerformed(evt);
+            }
+        });
+        jPopupMenu1.add(popEliminar);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 102));
+        jPanel1.setBackground(new java.awt.Color(102, 204, 255));
 
         jLabel1.setBackground(new java.awt.Color(51, 255, 204));
         jLabel1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
@@ -159,6 +171,11 @@ public class Principal extends javax.swing.JFrame {
         });
 
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -237,6 +254,7 @@ public class Principal extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tablaDatos.setComponentPopupMenu(jPopupMenu1);
         tablaDatos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tablaDatosMouseClicked(evt);
@@ -245,6 +263,15 @@ public class Principal extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tablaDatos);
 
         btnImprimir.setText("Imprimir Reporte");
+
+        jLabel3.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jLabel3.setText("Buscar");
+
+        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtBuscarKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -255,8 +282,13 @@ public class Principal extends javax.swing.JFrame {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnImprimir)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(btnImprimir)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -267,7 +299,10 @@ public class Principal extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 384, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnImprimir)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnImprimir)
+                    .addComponent(jLabel3)
+                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -314,12 +349,14 @@ public class Principal extends javax.swing.JFrame {
         try {
             PreparedStatement ps = cn.prepareStatement("INSERT INTO empleados (nombre, apellidos,direccion,telefono) VALUES (?,?,?,?)");
 
-            ps.setString(1, txtNombre.getText());
+            ps.setString(1, txtNombre.getText()); 
             ps.setString(2, txtApellidos.getText());
             ps.setString(3, txtDireccion.getText());
             ps.setString(4, txtTelefono.getText());
 
             ps.executeUpdate();
+
+            JOptionPane.showMessageDialog(null, "Datos Guardados");
 
             limpiar();
             mostrarTabla("");
@@ -366,6 +403,39 @@ public class Principal extends javax.swing.JFrame {
         this.txtTelefono.setText(this.tablaDatos.getValueAt(fila, 4).toString());
     }//GEN-LAST:event_tablaDatosMouseClicked
 
+    private void popEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_popEliminarActionPerformed
+
+        try {
+            PreparedStatement ps = cn.prepareStatement("DELETE FROM empleados WHERE id = '" + txtId.getText() + "' ");
+
+            int respuesta = ps.executeUpdate();
+
+            if (respuesta > 0) {
+
+                JOptionPane.showMessageDialog(null, "Empleado eliminado del sistema");
+                limpiar();
+                mostrarTabla("");
+            } else {
+                JOptionPane.showMessageDialog(null, "No haz seleccionado una fila");
+
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar empleado..." + e);
+            JOptionPane.showMessageDialog(null, "Error al tratar de eliminar");
+
+        }
+    }//GEN-LAST:event_popEliminarActionPerformed
+
+    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
+
+        mostrarTabla(txtBuscar.getText());
+    }//GEN-LAST:event_txtBuscarKeyReleased
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        limpiar();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -408,6 +478,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JButton btnImprimir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -415,9 +486,12 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPopupMenu jPopupMenu1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JMenuItem popEliminar;
     private javax.swing.JTable tablaDatos;
     private javax.swing.JTextField txtApellidos;
+    private javax.swing.JTextField txtBuscar;
     private javax.swing.JTextField txtDireccion;
     private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtNombre;
